@@ -1,0 +1,155 @@
+#include<stdio.h>
+#include<conio.h>
+
+struct node
+{
+	int data;
+	struct node* next;
+	struct node* prev;
+};
+struct node* head = NULL;
+void iab()
+{
+	struct node * newnode = (struct node*) malloc(sizeof(struct node));
+	if (newnode == NULL)
+		printf("Memory not allocated\n");
+	else {
+		printf("Enter an element\n");
+		scanf_s("%d", &newnode->data);
+		newnode->next = NULL;
+		newnode->prev = NULL;
+		if (head == NULL)
+		{
+			head = newnode;
+		}
+		else
+		{
+			newnode->next = head;
+			head->prev = newnode;
+			head = newnode;
+		}
+	}
+}
+void iae()
+{
+	struct node* newnode = (struct node*) malloc(sizeof(struct node));
+	if (newnode == NULL)
+		printf("Memory not allocated\n");
+	else {
+		printf("Enter an element\n");
+		scanf_s("%d", &newnode->data);
+		newnode->next = NULL;
+		newnode->prev = NULL;
+		struct node*temp;
+		if (head == NULL)
+		{
+			head = newnode;
+		}
+		else
+		{
+			temp = head;
+
+			while (temp->next != NULL)
+			{
+				temp = temp->next;
+			}
+			newnode->prev = temp;
+			temp->next = newnode;
+		}
+	}
+}
+
+void dbv()
+{
+	int del, flag = 0;
+	struct node*temp;
+	temp = head;
+	printf("Enter the element to be deleted\n");
+	scanf_s("%d", &del);
+		while (temp!=NULL)
+		{
+			if (temp->data == del)
+			{
+				flag = 1;
+				if (temp->next == NULL&&temp->prev == NULL)
+				{
+					head = NULL;
+					free(temp);
+					printf("Element deleted sucessfully\n");
+					break;
+				}
+				if (temp->prev == NULL)
+				{
+					temp->next->prev = NULL;
+					head = temp->next;
+					free(temp);
+					printf("Element deleted sucessfully\n");
+					break;
+				}
+				if (temp->next == NULL)
+				{
+					temp->prev->next = NULL;
+					free(temp);
+					printf("Element deleted sucessfully\n");
+					break;
+				}
+				temp->prev->next = temp->next;
+				temp->next->prev = temp->prev;
+				free(temp);
+				printf("Element deleted sucessfully\n");
+				break;
+			}
+			temp = temp -> next;
+		}
+	if (flag == 0)
+	{
+		printf("Element not found\n");
+	}
+}
+void display()
+{
+	struct node*ptr;
+	ptr = head;
+	if (head == NULL)
+	{
+		printf("Doubly link list is empty\n");
+	}
+	else
+	{
+		while (ptr != NULL)
+		{
+			printf("%d\n", ptr->data);
+			ptr = ptr->next;
+		}
+	}
+}
+int main()
+{
+	int a;
+	do {
+		printf("1.Insertion at the begining\n2.Insetion at end\n3.Delete by value\n4.Display\n5.Exit\n");
+		scanf_s("%d", &a);
+		switch (a)
+		{
+		case 1:
+			iab();
+			break;
+		case 2:
+			iae();
+			break;
+		case 3:
+			dbv();
+			break;
+		case 4:
+			display();
+			break;
+		case 5:
+			printf("Program exited successfully\n");
+			break;
+		default:
+			printf("Wrong input\n");
+		}
+		printf("-----------------------------------------\n");
+	} while (a != 5);
+	_getch();
+}
