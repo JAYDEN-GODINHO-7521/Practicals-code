@@ -1,0 +1,159 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+
+bool compare(int arr1[], int arr2[], int N)
+{
+    // Linearly compare elements
+    for (int i = 0; i < N; i++){
+        if (arr1[i] > arr2[i])
+            return false;
+    }
+    return true;
+}
+
+int safety(int nos,
+    int res,
+    int alloc[15][10],
+    int max[15][10],
+    int available[10],
+    int need[15][10] ){
+        int finish[nos]={0};
+        int work[10];
+        int a=0;
+        bool fail=true;
+        int safe_seq[10];
+        int ss_count=0;
+        int finish_count=0;
+        int need_temp[10];
+        for(int i=0;i<res;i++){
+            work[i]=available[i];
+        }
+        while(finish_count<nos){
+            if(a==nos){
+                if(fail==false)
+                    break;
+                a=0;
+                fail=false;
+            }
+            if(finish[a]==0){
+                for(int i=0;i<res;i++){
+                    need_temp[i]=need[a][i];
+                }
+                if(compare(need_temp,work,res)){
+                    for(int i=0;i<res;i++){
+                        work[i]=work[i]+alloc[a][i];
+                    }
+                    finish_count++;
+                    finish[a]=1;
+                    fail=true;
+                    safe_seq[ss_count]=a;
+                    ss_count++;
+                }
+            }
+            a++;
+        }
+        if(!fail){
+            cout<<"The system is not in safe state"<<endl;
+            return 0;
+        }
+        cout<<"The safe sequence is:";
+        for(int i=0;i<ss_count;i++){
+            cout<<safe_seq[i]<<" ";
+        }
+        cout<<endl;
+        return 1;
+}
+
+int resource_request(int nos,
+    int res,
+    int alloc[15][10],
+    int max[15][10],
+    int available[10],
+    int need[15][10] ){
+
+        int a;
+        int request[10];
+        int temp[10];
+        cout<<"Enter the process that you want to request resources for:";
+        cin>>a;
+        cout<<"Enter the resource request for the process:";
+        for(int i=0;i<res;i++)
+            cin>>request[i];
+
+        for(int i=0;i<res;i++){
+            temp[i]=need[a][i];
+        }
+        if(!compare(request,temp,res))
+            return 0;
+
+        for(int i=0;i<res;i++){
+            temp[i]=available[i];
+        }
+        if(!compare(request,temp,res))
+            return 0;
+
+        for(int i=0;i<res;i++){
+            available[i]=available[i]-request[i];
+            alloc[a][i]=alloc[a][i]+request[i];
+            need[a][i]=need[a][i]-request[i];
+        }
+
+        if(safety(nos,res,alloc,max,available,need))
+            return 1;
+        else
+            return 0;
+}
+int main(){
+    int nos;
+    int res;
+    int alloc[15][10];
+    int max[15][10];
+    int available[10];
+    int need[15][10];
+
+    char ans;
+
+    cout<<"Enter the number of processes:";
+    cin>>nos;
+    cout<<"Enter the number of each type of resources:";
+    cin>>res;
+    
+    for(int i=0;i<nos;i++){
+        cout<<"Enter resources allocated to the processes "<<i<<":";
+        for(int j=0;j<res;j++){
+            cin>>alloc[i][j];
+        }
+    }
+    for(int i=0;i<nos;i++){
+        cout<<"Enter maximum resources needed for processes "<<i<<":";
+        for(int j=0;j<res;j++){
+            cin>>max[i][j];
+        }
+    }
+    cout<<"Enter available resources:";
+    for(int i=0;i<res;i++){
+        cin>>available[i];
+    }
+    for(int i=0;i<nos;i++){
+        for(int j=0;j<res;j++){
+            need[i][j]=max[i][j]-alloc[i][j];
+        }
+    }
+    
+    safety(nos,res,alloc,max,available,need);
+
+    cout<<"Do you want to request resources for a process?(Y/N) :";
+    cin>>ans;
+
+    if(ans=='Y'){
+        if(resource_request(nos,res,alloc,max,available,need)){
+            cout<<"Resources where allocated sucessfully";
+        }
+        else{
+            cout<<"Request to accesses the resources was denied";
+        }
+    }
+    _getch();
+    return 0;
+}
