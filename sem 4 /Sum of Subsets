@@ -1,0 +1,46 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+int w[20],n,m;
+void sumofsub(int sum,int k,int r,int x[])
+{
+    x[k]=1;
+    if(sum+w[k]==m)
+    {
+        cout<<"(";
+        for(int i=0;i<=k;i++)
+        {
+            cout<<x[i]<<",";
+        }
+        for(int i=k+1 ; i<n;i++)
+        {
+            cout<<"0,";
+        }
+        cout<<")\n";
+    }
+    else if(sum+w[k]+w[k+1]<=m)
+    {
+        sumofsub(sum+w[k],k+1,r-w[k],x);
+    }
+    if((sum+r-w[k]>=m)&&(sum+w[k+1]<=m))
+    {
+        x[k]=0;
+        sumofsub(sum,k+1,r-w[k],x);
+    }
+}
+int main()
+{
+    int x[10]={0},r=0;
+    cout<<"Enter the number of elements:";
+    cin>>n;
+    cout<<"Enter elements(Strictly non-decreasing order):";
+    for(int i=0;i<n;i++)
+    {
+        cin>>w[i];
+        r=r+w[i];
+    }
+    cout<<"Enter the sum:";
+    cin>>m;
+    sumofsub(0,0,r,x);
+    _getch();
+}
