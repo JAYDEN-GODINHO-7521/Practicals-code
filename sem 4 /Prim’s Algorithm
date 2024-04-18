@@ -1,0 +1,92 @@
+#include<iostream>//There might be some error in this code
+#include<conio.h>
+using namespace std;
+int prim(int k,int l, int cost[10][10], int n, int t[10][2])
+{
+    int near[10],visited[20];
+    int p,q,min=99999;
+    int mincost = cost[k][l];
+    t[1][ 1] = k;
+    t[1][ 2] = l;
+    visited[k]=1;
+    visited[l]=1;
+    for (int i = 1; i <= n; i++)
+    {
+        if (cost[i] [l] < cost[i][k])
+            near[i] = l;
+        else near[i] = k;
+    }
+    near[k] = near[l] = 0;
+    for (int y = 2; y < n; y++)
+    {
+        min=99999;
+        for (int ii = 1; ii<=n; ii++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if(visited[ii]!=1 || visited[j]!=1)
+                {   
+                    if (min > cost[ii][j])
+                    {
+                        min = cost[ii][j];
+                        p = ii;
+                        near[p] = j;
+                    }
+                }
+            }
+        }
+        t[y][1] = p;
+        t[y][2] = near[p];
+        visited[near[p]]=1;
+        mincost = mincost + cost[p] [near[p]];
+        near[p] = 0;
+        for (int k = 1; k <= n; k++)
+        {
+            if ((near[k] != 0) && (cost[k][near[k]] > cost[k][p]))
+                near[k] = p;
+        }
+    }
+    /*for (int i = 1; i<n; i++)
+    {
+        for (int j = 1; j <= 2; j++)
+        {
+            cout<<t[i][j]<<endl;
+        }
+    }*/
+        return mincost;
+}
+int main()
+{
+    int n, mincost;
+    int t[10][2];
+    int min=99999,k,l;
+    int cost[10][10];
+    cout<<"Enter the number of edges\n";
+    cin >> n;
+    cout << "Enter the adjacency matrix\n";
+    for(int i=1;i<=n;i++)
+    {
+        cout<<i<<"=";
+        for (int j = 1; j <= n; j++)
+        {
+            cin >> cost[i][j];
+            if(cost[i][j]==0)
+                cost[i][j]=99999;
+        }
+    }
+    for (int i = 1; i<=n; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            if (min > cost[i][j])
+            {
+                min = cost[i][j];
+                k = i;
+                l = j;
+            }
+        }
+    }
+    mincost=prim(k, l, cost, n, t);
+    cout <<"Mincost is:"<< mincost;
+    _getch();
+}
