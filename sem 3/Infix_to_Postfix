@@ -1,0 +1,76 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<conio.h>
+#include<ctype.h>
+char st[100];
+int top = -1;
+void push(char chi)
+{
+	st[++top] = chi;
+}
+char pop()
+{
+	return st[top--];
+}
+int precedence(char operator)
+{
+	if (operator=='^')
+		return(3);
+	if (operator == '*' || operator == '/')
+		return(2);
+	if (operator == '+' || operator == '-')
+		return(1);
+	else
+		return(0);
+}
+
+void main()
+{
+	char pf[20], in[20];
+	char element;
+	char ch;
+	int i = 0, j = 0;
+	printf("Enter the expresion\n");
+	scanf("%s",in);
+	push('@');
+	while ((ch = in[i++]) != '\0')
+	{
+		if (ch == '(')
+			push(ch);
+		else
+		{
+			if (isalnum(ch))
+			{
+				pf[j++] = ch;
+
+			}
+			else
+			{
+				if (ch == ')')
+				{
+					while (st[top] != '(')
+					{
+						pf[j] = pop();
+						j++;
+					}
+					element = pop();
+				}
+				else
+				{
+					while (precedence(st[top]) >= precedence(ch))
+					{
+						pf[j++] = pop();
+					}
+					push(ch);
+				}
+			}
+		}
+	}
+	while (st[top] != '@')
+	{
+		pf[j++] = pop();
+	}
+	pf[j] = '\0';
+	printf("\nEquevalent postfix expresion is: %s\n", pf);
+	_getch();
+}
