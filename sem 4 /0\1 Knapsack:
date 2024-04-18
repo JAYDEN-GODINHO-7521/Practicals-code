@@ -1,0 +1,70 @@
+#include<iostream>//I modified and debugged this code
+#include<conio.h>
+using namespace std;
+int w[10], p[10],f[10][10];
+int max(int i,int j)
+{
+    if (i > j)
+        return i;
+    else
+        return j;
+}
+int Dpknapsack(int i, int j)
+{
+    if (i <= 0 || j <= 0 )
+    {
+        return 0;
+    }
+    else if (j < w[i])
+    {
+        f[i][j]= Dpknapsack(i-1, j);
+        return f[i][j];
+    }
+    else if(j>=w[i])
+    {
+        int a=Dpknapsack(i - 1, j); 
+        int b=Dpknapsack(i - 1, j - w[i]) + p[i];
+        f[i][j]= max(a,b);      //too many function on one line
+        return f[i][j];
+    }
+}
+int main()
+{
+    int n,nn, m,profit,x[10];
+    cout << "Enter the number of objects\n";
+    cin >> n;
+    nn=n;
+    cout << "Enter maximum capacity\n";
+    cin >> m;
+    cout << "Enter weight and profit of each object\n";
+    for (int i = 1; i <= n; i++)
+    {
+        cout << "object: "<<i <<endl;
+        cin >> w[i];
+        cin >> p[i];
+    }
+
+    profit =  Dpknapsack(n, m);
+
+    for (int i = n; i >=0 ;--i)
+    {
+        if (f[n][m] != f[n - 1][m])
+        {
+            x[i] = 1;
+            m = m - w[n];
+            n = n - 1;
+        }
+        else 
+        {
+            x[i] = 0;
+            n = n - 1;
+        }
+    }
+    cout << "Solution to the 0/1 knapsack problem is ( ";
+    for (int i = 1; i <= nn; i++)
+        cout << x[i] << ",";
+    cout << ")\n";
+    cout << "Max profit is:"<<profit;
+    _getch();
+    return 0;
+}
