@@ -1,0 +1,166 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+
+void bubble(int processes[], int AT[], int BT[], int n)
+{
+    int t;
+    for (int i = 1; i <= n - 1; i++)
+    {
+        for (int j = 1; j <= n - i - 1; j++)
+        {
+            if (AT[j] > AT[j + 1])
+            {
+                    t = AT[j + 1];
+                    AT[j + 1] = AT[j];
+                    AT[j] = t;
+
+                    t = BT[j + 1];
+                    BT[j + 1] = BT[j];
+                    BT[j] = t;
+
+                    t = processes[j + 1];
+                    processes[j + 1] = processes[j];
+                    processes[j] = t;
+            }
+        }
+    }
+    for (int i = 1; i <= n - 1; i++)
+    {
+        for (int j = 1; j <= n - i - 1; j++)
+        {
+            if (AT[j] == AT[j + 1] && BT[j]>BT[j+1])
+            {
+                t = AT[j+1];
+                AT[j + 1] = AT[j];
+                AT[j] = t;
+
+                t = BT[j + 1];
+                BT[j + 1] = BT[j];
+                BT[j] = t;
+
+                t = processes[j + 1];
+                processes[j + 1] = processes[j];
+                processes[j] = t;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n, process[10], BT[10], AT[10], FT[10], TAT[10], WT[10],last,gen[15],q,p;
+    float ATAT=0,AWT=0;
+    cout << "Enter the number of processes\n";
+    cin >> n;
+    for (int i = 1;i < n+1;i++)
+    {
+        process[i] = i;
+        cout << "Enter the arrival time of process " << i << ":";
+        cin >> AT[i];
+        cout << "Enter the burst time of process " << i << ":";
+        cin >> BT[i];
+    }
+
+    bubble(process,AT,BT,n+1); 
+
+    FT[0] = gen[0] = AT[1];
+    q=0;
+    for (int i = 1;i < n + 1;i++)
+    {
+        if(AT[i]>FT[i-1])
+        {
+            FT[i] = AT[i] + BT[i];
+            TAT[i] = FT[i] - AT[i];
+            WT[i] = TAT[i] - BT[i];
+            gen[i+q]=AT[i];
+            gen[i+q+1]=FT[i];
+            q=q+1;
+        }
+        else
+        {
+            FT[i] = FT[i-1] + BT[i];
+            TAT[i] = FT[i] - AT[i];
+            WT[i] = TAT[i] - BT[i];
+            gen[i+q]=FT[i];
+        }
+    }
+
+    cout << "Process ID   Arrival Time   Burst Time   Finish Time   Turn Around Time   Wating Time" << endl;
+    for (int i = 1;i < n + 1;i++)
+    {
+        cout <<"       "<< process[i] << "            ";
+        cout << AT[i] <<"              ";
+        cout << BT[i] << "            ";
+        cout << FT[i] << "            ";
+        cout << TAT[i] << "                 ";
+        cout << WT[i] << "         " << endl;
+    }
+
+    for (int i = 1;i < n + 1;i++)
+    {
+        ATAT = ATAT + TAT[i];
+        AWT = AWT + WT[i];
+    }
+
+    last = FT[n];
+
+    for (int i = gen[0]+1;i < last+1;i++)
+    {
+        cout << " --";
+    }
+    cout << endl;
+    int k = 0;
+    for (int i = gen[0],p=1,r=0;i < last+1;i++)
+    {
+
+        if (i == gen[k])
+        {
+            cout << "|";
+            k++;
+            if(last<=i && !r)
+                break;
+            if ( AT[p]<=gen[p-1+r])
+            {
+                cout << "P" << process[k-r];
+                p++;
+            }
+            else
+            {
+                cout << "  ";
+                r=r+1;
+            }
+        }
+        else
+        {
+            cout << "   ";
+        }
+
+    }
+    cout << endl;
+    for (int i = gen[0]+1;i < last+1;i++)
+    {
+        cout << " --";
+    }
+    cout << endl;
+    k = 0;
+    for (int i = gen[0];i < last+1;i++)
+    {
+
+        if (i == gen[k])
+        {
+            cout << i;
+            k++;
+        }
+        else
+        {
+            cout << " ";
+        }
+        cout << "  ";
+    }
+    cout << endl;
+    cout << "Average Turn around Time is:" << ATAT / n << endl;
+
+    cout << "Average Waiting Time is:" << AWT / n << endl;
+}
+getch();
