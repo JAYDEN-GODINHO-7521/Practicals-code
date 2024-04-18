@@ -1,0 +1,65 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+int a[10];
+void interchange(int i, int j)
+{
+    int p = a[i];
+    a[i] = a[j];
+    a[j] = p;
+}
+int partition(int m, int p)
+{
+    int v = a[m], i = m, j = p;
+    if(m>=p)
+        return 0;
+    do
+    {
+        do
+        {
+            i = i +1;
+        } while (a[i] <= v);
+        do
+        {
+            j = j - 1;
+        } while (a[j] > v);
+        if(i<j)
+            interchange(i, j);
+    } while (i <= j);
+    a[m] = a[j];a[j] = v;
+    return j;
+}
+int select1(int n,int k)
+{
+    int j=0,low=1,up=n+1;
+    do
+    {
+        j=partition(low,up);
+
+        if(k==j)
+            return k;
+        else if(k<j)
+            up=j;
+        else
+            low=j+1;
+    }while(1);
+}
+int main()
+{                               
+    int n,k;
+    cout << "Enter the size of the array\n";
+cin >> n;
+cout << "Enter elements of the array\n";
+    for (int y=1;y <= n;y++)
+    {
+        cin >> a[y];
+    }
+    cout<<"Enter the postion:";
+    cin>>k;
+    a[n+1]=10000;
+
+    k=select1(n, k);
+cout << "Element at position " << k << " is:";
+    cout << a[k];
+    _getch();
+}
