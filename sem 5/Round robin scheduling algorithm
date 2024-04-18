@@ -1,0 +1,220 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+
+struct timestamp
+{
+    int T;
+    int pid;
+}time[40]={0};
+
+class queue {
+public:
+    int arr[100];
+    int front;
+    int back;
+    queue(){
+        front = back = 1;
+    }
+    bool checkifempty()
+    {
+        if(front==back)
+            return true;
+        else
+            return false;
+    }
+    int pop()
+    {
+        front++;
+        return arr[front];
+    }
+    void push(int nos)
+    {
+        back++;
+        arr[back] = nos;
+    }
+}; 
+
+void bubble(int AT[],int BT[],int nos[], int n)
+    {
+        int t;
+        for (int i = 1; i <= n - 1; i++)
+        {
+            for (int j = 1; j <= n - i ; j++)
+            {
+                if (AT[j] > AT[j + 1])
+                {
+                    t = AT[j + 1];
+                    AT[j + 1] = AT[j];
+                    AT[j] = t;
+
+                    t = BT[j + 1];
+                    BT[j + 1] = BT[j];
+                    BT[j] = t;
+
+                    t = nos[j + 1];
+                    nos[j + 1] = nos[j];
+                    nos[j] = t;
+                }
+            }
+        }
+    }
+
+int comp(int nos[],int BT[],int FT[],int N,int currentprocess,int point,int T,int timemark)
+{
+    int TQ=T;
+    int temp;
+    if(BT[currentprocess]-TQ>0)
+    {
+        BT[currentprocess]=BT[currentprocess]-TQ;
+        time[timemark].T=point+TQ;
+        time[timemark].pid=nos[currentprocess];
+        return point+TQ;
+    }
+    else
+    {   
+        temp=point+BT[currentprocess];
+        BT[currentprocess]=0;
+        FT[currentprocess]=temp;
+        time[timemark].T=temp;
+        time[timemark].pid=nos[currentprocess];
+        return temp;
+    }
+}
+
+int main()
+{
+    int T;
+    int nos[15];
+    int AT[15];
+    int BT[15];
+    int FT[15];
+    int TAT[15];
+    int WT[15];
+    int backBT[15];
+    int n;
+    float ATAT = 0, AWT = 0;
+    cout << "Enter the number of processes\n";
+    cin >> n;
+    cout << "Enter time quantum\n";
+    cin >> T;
+    for (int i = 1; i < n + 1; i++)
+    {
+        nos[i]=i;
+        cout << "Enter the arrival time of process " << i << ":";
+        cin >> AT[i];
+        cout << "Enter the burst time of process " << i << ":";
+        cin >> BT[i];
+    }
+
+    bubble(AT,BT,nos,n);
+
+    for (int i = 1; i < n + 1; i++)
+    {
+        backBT[i]=BT[i];
+    }
+
+    int point=AT[1];
+    int b=2;
+    int c=2;
+    int timemark=1;
+    int currentprocess=1;
+    queue q;
+    int last;
+    do {
+        while(AT[b]<=point&&n>=b)
+        {
+            q.push(b);
+            b++;
+        }
+        
+        if(BT[currentprocess]!=0)
+            q.push(currentprocess);
+        else if (q.checkifempty())
+        {
+            break;
+        }
+        
+        currentprocess=q.pop();
+        point=comp(nos,BT,FT,n,currentprocess,point,T,timemark);
+        timemark++;
+    }while(1);
+    
+    
+    for(int i=1;i<n+1;i++){
+        TAT[i] = FT[i] - AT[i];
+        WT[i] = TAT[i] - backBT[i];
+    }
+
+    cout << endl << "Process ID   Arrival Time   Burst Time   Finish Time   Turn Around Time   Wating Time" << endl;
+    for (int i = 1;i < n + 1;i++)
+    {
+        cout <<"       "<< nos[i] << "            ";
+        cout << AT[i] <<"              ";
+        cout << backBT[i] << "            ";
+        cout << FT[i] << "            ";
+        cout << TAT[i] << "                 ";
+        cout << WT[i] << "         " << endl;
+    }
+
+    for (int i = 1;i < n + 1;i++)
+    {
+        ATAT = ATAT + TAT[i];
+        AWT = AWT + WT[i];
+    }
+
+    last=time[timemark-1].T;
+    for (int i = 1;i <= last ;i++)
+    {
+        cout << " --";
+    }
+    cout << endl;
+    int k = 0;
+    for (int i = 0,p=1;i <= last;i++)
+    {
+
+        if (i == time[k].T)
+        {
+            cout << "|";
+            k++;
+            if (time[k].T!=0)
+            {
+                cout << "P" << time[p].pid;
+                p++;
+            }
+        }
+        else
+        {
+            cout << "   ";
+        }
+
+    }
+    cout << endl;
+    for (int i = 1;i <= last ;i++)
+    {
+        cout << " --";
+    }
+    cout << endl;
+    k = 0;
+    for (int i = 0;i <= last;i++)
+    {
+
+        if (i == time[k].T)
+        {
+            cout << i;
+            k++;
+        }
+        else
+        {
+            cout << " ";
+        }
+        cout << "  ";
+    }
+    cout << endl;
+    cout << "Average Turn around Time is:" << ATAT / n << endl;
+
+    cout << "Average Waiting Time is:" << AWT / n << endl;
+
+    getch();
+    return 0;
+}
